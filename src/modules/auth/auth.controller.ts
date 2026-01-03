@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt, { type SignOptions } from "jsonwebtoken";
 import mongoose from "mongoose";
 import crypto from "crypto";
-import nodemailer from "nodemailer";
+import { transporter } from "../../config/mail";
 
 import { BusinessModel } from "./business.model";
 import { UserModel } from "./user.model";
@@ -178,24 +178,13 @@ export const AuthController = {
         expires_at: expiresAt,
       });
 
-      const smtpHost = process.env.SMTP_HOST;
       const smtpUser = process.env.SMTP_USER;
       const smtpPass = process.env.SMTP_PASS;
       const smtpFrom = process.env.SMTP_FROM;
 
-      if (!smtpHost || !smtpUser || !smtpPass || !smtpFrom) {
+      if (!smtpUser || !smtpPass || !smtpFrom) {
         return res.status(500).json({ message: "SMTP_NOT_CONFIGURED" });
       }
-
-      const transporter = nodemailer.createTransport({
-        host: smtpHost,
-        port: Number(process.env.SMTP_PORT || 587),
-        secure: Number(process.env.SMTP_PORT || 587) === 465,
-        auth: {
-          user: smtpUser,
-          pass: smtpPass,
-        },
-      });
 
       const baseUrl = process.env.APP_BASE_URL || "http://localhost:3000";
       const normalizedBase = baseUrl.endsWith("/")
