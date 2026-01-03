@@ -11,8 +11,8 @@ export const transporter = nodemailer.createTransport({
 transporter
   .verify()
   .then(() => {
-    console.log("Gmail Service Connected");
+    console.log("✅ Gmail Service listo para enviar correos");
   })
   .catch((error) => {
-    console.error("Mail connection error:", error);
+    console.error("❌ Error crítico de conexión Mail:", error);
   });
