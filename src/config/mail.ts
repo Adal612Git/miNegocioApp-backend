@@ -1,12 +1,7 @@
 import nodemailer from "nodemailer";
 
-const port = Number(process.env.SMTP_PORT) || 587;
-const isSecure = port === 465;
-
 export const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST || "smtp.gmail.com",
-  port,
-  secure: isSecure,
+  service: "gmail",
   auth: {
     user: process.env.SMTP_USER,
     pass: process.env.SMTP_PASS,
@@ -16,10 +11,8 @@ export const transporter = nodemailer.createTransport({
 transporter
   .verify()
   .then(() => {
-    console.log(
-      `Mail server connected on port ${port} (Secure: ${isSecure})`
-    );
+    console.log("Gmail Service Connected");
   })
   .catch((error) => {
-    console.error("Mail server connection error:", error);
+    console.error("Mail connection error:", error);
   });
