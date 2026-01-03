@@ -4,20 +4,29 @@
   const cartBody = document.querySelector("#tablaCarrito tbody");
   const totalEl = document.getElementById("total");
   const payBtn = document.getElementById("btnCobrar");
+  const emptyBtn = document.getElementById("btnVaciar");
+  const backdrop = document.getElementById("backdrop");
+  const modalTotal = document.getElementById("mTotal");
+  const receivedInput = document.getElementById("mRecibido");
+  const changeEl = document.getElementById("mCambio");
+  const confirmBtn = document.getElementById("confirmar");
+  const cancelBtn = document.getElementById("cancelar");
+  const closeBtn = document.getElementById("cerrar");
+  const keypad = document.getElementById("keypad");
 
   let catalog = [];
   let cart = [];
 
-  function formatMoney(cents) {
-    const amount = (cents || 0) / 100;
-    return amount.toLocaleString("es-MX", {
+  function formatMoney(amount) {
+    const value = Number(amount || 0);
+    return value.toLocaleString("es-MX", {
       style: "currency",
       currency: "MXN",
     });
   }
 
   function computeTotal() {
-    return cart.reduce((sum, item) => sum + item.priceCents * item.quantity, 0);
+    return cart.reduce((sum, item) => sum + item.price * item.quantity, 0);
   }
 
   function renderCatalog() {
@@ -26,11 +35,11 @@
 
     catalog.forEach((product) => {
       const tr = document.createElement("tr");
-      const price = formatMoney(product.priceCents || product.price_cents || 0);
+      const price = formatMoney(product.price || 0);
       const stock = product.stock ?? 0;
       tr.innerHTML = `
         <td>${product.name || ""}</td>
-        <td>${product.type || "product"}</td>
+        <td>${product.category || "-"}</td>
         <td>${price}</td>
         <td>
           <button class="btn-sm">Agregar</button>
@@ -51,7 +60,7 @@
       const tr = document.createElement("tr");
       tr.innerHTML = `
         <td>${item.name} x${item.quantity}</td>
-        <td>${formatMoney(item.priceCents * item.quantity)}</td>
+        <td>${formatMoney(item.price * item.quantity)}</td>
         <td><button class="btn-sm">Quitar</button></td>
       `;
       tr.querySelector("button")?.addEventListener("click", () => {
@@ -76,7 +85,7 @@
       cart.push({
         productId,
         name: product.name,
-        priceCents: product.priceCents ?? product.price_cents ?? 0,
+        price: product.price ?? 0,
         quantity: 1,
       });
     }
@@ -88,13 +97,41 @@
     renderCart();
   }
 
-  function parseAmountToCents(value) {
+  function parseAmount(value) {
     if (!value) return 0;
     const normalized = value.replace(/[^0-9.]/g, "");
     if (!normalized) return 0;
     const amount = Number.parseFloat(normalized);
     if (Number.isNaN(amount)) return 0;
-    return Math.round(amount * 100);
+    return amount;
+  }
+
+  function openPayModal() {
+    if (!backdrop) return;
+    const total = computeTotal();
+    if (modalTotal) {
+      modalTotal.textContent = formatMoney(total);
+    }
+    if (receivedInput) {
+      receivedInput.value = "";
+    }
+    if (changeEl) {
+      changeEl.textContent = formatMoney(0);
+    }
+    backdrop.style.display = "flex";
+  }
+
+  function closePayModal() {
+    if (!backdrop) return;
+    backdrop.style.display = "none";
+  }
+
+  function updateChange() {
+    if (!receivedInput || !changeEl) return;
+    const amountPaid = parseAmount(receivedInput.value || "");
+    const total = computeTotal();
+    const change = Math.max(0, amountPaid - total);
+    changeEl.textContent = formatMoney(change);
   }
 
   async function handlePay() {
@@ -103,9 +140,18 @@
       return;
     }
 
-    const input = document.getElementById("mRecibido");
-    const raw = input?.value || prompt("Monto recibido");
-    const amountPaidCents = parseAmountToCents(String(raw || ""));
+    const raw = receivedInput?.value || "";
+    const amountPaid = parseAmount(String(raw || ""));
+    const total = computeTotal();
+
+    if (!amountPaid || amountPaid <= 0) {
+      alert("Ingresa el monto recibido.");
+      return;
+    }
+    if (amountPaid < total) {
+      alert("El monto recibido es menor al total.");
+      return;
+    }
 
     try {
       const sale = await api.post("/sales", {
@@ -113,23 +159,27 @@
           product_id: item.productId,
           quantity: item.quantity,
         })),
-        amount_paid_cents: amountPaidCents,
+        amount_paid: amountPaid,
       });
 
-      const changeCents =
-        sale?.changeCents ?? sale?.change_cents ?? sale?.change ?? 0;
-      const changeEl = document.getElementById("mCambio");
+      const computedTotal = sale?.total ?? total;
+      const changeData = await api.post("/sales/change", {
+        total: computedTotal,
+        monto_recibido: amountPaid,
+      });
+      const changeAmount = changeData?.cambio ?? 0;
       if (changeEl) {
-        changeEl.textContent = formatMoney(changeCents);
+        changeEl.textContent = formatMoney(changeAmount);
       } else {
-        alert(`Cambio: ${formatMoney(changeCents)}`);
+        alert(`Cambio: ${formatMoney(changeAmount)}`);
       }
 
       cart = [];
       renderCart();
+      closePayModal();
     } catch (err) {
       if (err?.status === 409) {
-        alert("Stock insuficiente");
+        alert("Monto insuficiente o stock insuficiente");
         return;
       }
       alert("No se pudo procesar la venta");
@@ -146,7 +196,29 @@
     }
   }
 
-  payBtn?.addEventListener("click", handlePay);
+  payBtn?.addEventListener("click", openPayModal);
+  confirmBtn?.addEventListener("click", handlePay);
+  cancelBtn?.addEventListener("click", closePayModal);
+  closeBtn?.addEventListener("click", closePayModal);
+  receivedInput?.addEventListener("input", updateChange);
+  keypad?.addEventListener("click", (event) => {
+    const target = event.target;
+    if (!(target instanceof HTMLButtonElement)) return;
+    if (!receivedInput) return;
+    const value = target.textContent || "";
+    if (value === "C") {
+      receivedInput.value = "";
+    } else if (value === "<") {
+      receivedInput.value = receivedInput.value.slice(0, -1);
+    } else if (/^[0-9]$/.test(value)) {
+      receivedInput.value = `${receivedInput.value}${value}`.slice(0, 10);
+    }
+    updateChange();
+  });
+  emptyBtn?.addEventListener("click", () => {
+    cart = [];
+    renderCart();
+  });
 
   loadProducts();
 })();

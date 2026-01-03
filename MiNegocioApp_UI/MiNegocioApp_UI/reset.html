@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MiNegocioApp | Recuperar contraseña</title>
+<link rel="stylesheet" href="assets/app.css"/>
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="logo">MN</div>
+      <div>
+        <div style="font-weight:900">MiNegocioApp</div>
+        <div class="muted" style="font-size:12px">Recuperar acceso</div>
+      </div>
+    </div>
+
+    <h2>Crear nueva contraseña</h2>
+    <p class="sub">Ingresa una contraseña segura para tu cuenta.</p>
+
+    <form id="resetForm">
+      <div class="field">
+        <label>Nueva contraseña</label>
+        <input id="resetPassword" type="password" placeholder="********">
+      </div>
+
+      <button id="resetButton" class="btn" type="submit">Guardar contraseña</button>
+    </form>
+
+    <div class="small">
+      <a class="link" href="index.html">Volver a iniciar sesión</a>
+    </div>
+  </div>
+</div>
+
+</body>
+<script src="js/config.js"></script>
+<script src="js/api.client.js"></script>
+<script src="js/reset.js"></script>
+</html>

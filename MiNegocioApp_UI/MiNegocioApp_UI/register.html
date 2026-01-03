@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MiNegocioApp | Registro</title>
 <link rel="stylesheet" href="assets/app.css"/>
@@ -23,47 +24,55 @@
 
     <form id="registerForm">
       <div class="row two">
-        <div class="field">
+        <div class="field" data-field="name">
           <label>Nombre</label>
-          <input placeholder="Miguel">
+          <input id="name" placeholder="Nombre" minlength="2" maxlength="120" required>
+          <div class="error-text" data-error="name"></div>
         </div>
-        <div class="field">
-          <label>Teléfono</label>
-          <input placeholder="33 0000 0000">
+        <div class="field" data-field="phone">
+          <label>Telefono</label>
+          <input id="phone" type="tel" inputmode="numeric" placeholder="0000000000" maxlength="10" pattern="[0-9]{10}" required>
+          <div class="error-text" data-error="phone"></div>
         </div>
       </div>
 
-      <div class="field">
+      <div class="field" data-field="email">
         <label>Correo</label>
-        <input id="email" type="email" placeholder="correo@ejemplo.com">
+        <input id="email" type="email" placeholder="correo@ejemplo.com" maxlength="120" required>
+        <div class="error-text" data-error="email"></div>
       </div>
 
-      <div class="field">
+      <div class="field" data-field="business_name">
         <label>Nombre del negocio</label>
-        <input id="business_name" placeholder="Mi Tiendita / Barbería / Consultorio">
+        <input id="business_name" placeholder="Mi Tiendita / Barberia / Consultorio" minlength="2" maxlength="120" required>
+        <div class="error-text" data-error="business_name"></div>
       </div>
 
       <div class="row two">
-        <div class="field">
-          <label>Contraseña</label>
-          <input id="password" type="password" placeholder="••••••••">
+        <div class="field" data-field="password">
+          <label>Contrasena</label>
+          <input id="password" type="password" minlength="8" maxlength="128" required>
+          <div class="error-text" data-error="password"></div>
         </div>
-        <div class="field">
+        <div class="field" data-field="password_confirm">
           <label>Confirmar</label>
-          <input id="password_confirm" type="password" placeholder="••••••••">
+          <input id="password_confirm" type="password" minlength="8" maxlength="128" required>
+          <div class="error-text" data-error="password_confirm"></div>
         </div>
       </div>
 
+      <div class="form-error" id="registerError"></div>
       <button id="registerButton" class="btn" type="submit">Crear cuenta</button>
     </form>
 
     <div class="small">
-      ¿Ya tienes cuenta? <a class="link" href="index.html">Inicia sesión</a>
+      Ya tienes cuenta? <a class="link" href="index.html">Inicia sesion</a>
     </div>
   </div>
 </div>
 
 </body>
+<script src="js/config.js"></script>
 <script src="js/api.client.js"></script>
 <script src="js/auth.js"></script>
 </html>

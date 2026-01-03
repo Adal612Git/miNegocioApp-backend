@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MiNegocioApp | Reportes</title>
 <link rel="stylesheet" href="assets/app.css"/>
@@ -19,12 +20,12 @@
       <div><div class="name">Miguel</div><div class="meta">Administrador</div></div>
     </div>
     <nav class="nav">
-      <a href="Inicio.html">🏠 Inicio</a>
-      <a href="citas.html">📅 Citas</a>
-      <a href="almacen.html">📦 Almacén</a>
-      <a href="caja.html">💰 Caja</a>
-      <a class="active" href="reportes.html">📊 Reportes</a>
-      <a href="index.html">🚪 Salir</a>
+      <a href="Inicio.html"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="citas.html"><i class="fa-solid fa-calendar-check"></i> Citas</a>
+      <a href="almacen.html"><i class="fa-solid fa-boxes-stacked"></i> Almacén</a>
+      <a href="caja.html"><i class="fa-solid fa-cash-register"></i> Caja</a>
+      <a class="active" href="reportes.html"><i class="fa-solid fa-chart-line"></i> Reportes</a>
+      <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
     </nav>
   </aside>
 
@@ -83,13 +84,15 @@
     <section class="card" style="margin-top:14px">
       <h3>Ventas en el rango</h3>
       <table class="table" id="tablaVentas">
-        <thead><tr><th>Fecha</th><th>Concepto</th><th>Total</th></tr></thead>
+        <thead><tr><th>Producto</th><th>Cant.</th><th>Ingresos</th></tr></thead>
         <tbody></tbody>
       </table>
     </section>
   </main>
 </div>
 
+<script src="js/config.js"></script>
+<script src="js/api.client.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/reportes.js"></script>
 </body>

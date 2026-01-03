@@ -1,6 +1,7 @@
 class ApiClient {
   constructor(baseUrl) {
-    this.baseUrl = baseUrl || "http://localhost:3000/api";
+    this.baseUrl =
+      baseUrl || window.API_BASE_URL || "https://api.lotosproductions.com/api";
   }
 
   getToken() {
@@ -58,6 +59,10 @@ class ApiClient {
       method: "PATCH",
       body: JSON.stringify(body || {}),
     });
+  }
+
+  delete(path) {
+    return this.request(path, { method: "DELETE" });
   }
 }
 

@@ -57,6 +57,21 @@ input, select{
   background:#fbfdff;
 }
 input:focus, select:focus{border-color:#b8d3ff; box-shadow:0 0 0 4px rgba(45,127,249,.12)}
+.field.error input, .field.error select{
+  border-color:#ef4444;
+  box-shadow:0 0 0 4px rgba(239,68,68,.12);
+}
+.error-text{
+  color:#b91c1c;
+  font-size:12px;
+  min-height:16px;
+}
+.form-error{
+  color:#b91c1c;
+  font-size:13px;
+  margin-top:6px;
+  min-height:18px;
+}
 .btn{
   width:100%;
   border:none;
@@ -124,6 +139,11 @@ input:focus, select:focus{border-color:#b8d3ff; box-shadow:0 0 0 4px rgba(45,127
   color:var(--text);
   border:1px solid transparent;
 }
+.nav a i{
+  width:18px;
+  text-align:center;
+  font-size:14px;
+}
 .nav a:hover{background:#f3f8ff}
 .nav a.active{
   background:var(--chip);
@@ -151,6 +171,8 @@ input:focus, select:focus{border-color:#b8d3ff; box-shadow:0 0 0 4px rgba(45,127
   color:var(--muted);
   font-size:13px;
 }
+.pill i{margin-right:6px}
+.actions .btn-sm i{margin-right:6px}
 .content-grid{
   display:grid;
   grid-template-columns: 1.2fr .8fr;
@@ -183,6 +205,12 @@ input:focus, select:focus{border-color:#b8d3ff; box-shadow:0 0 0 4px rgba(45,127
   font-size:13px;
 }
 .table th{color:var(--muted); font-weight:700}
+.empty-state{
+  color:var(--muted);
+  font-size:13px;
+  text-align:center;
+  padding:18px 8px;
+}
 
 .actions{display:flex; gap:10px; flex-wrap:wrap}
 .btn-sm{

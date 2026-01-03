@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8" />
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MiNegocioApp | Inicio</title>
 <link rel="stylesheet" href="assets/app.css" />
@@ -19,52 +20,43 @@
     </div>
 
     <div class="side-user">
-      <div class="avatar">M</div>
+      <div class="avatar">U</div>
       <div>
-        <div class="name">Miguel</div>
-        <div class="meta">Administrador • Negocio Demo</div>
+        <div class="name">Usuario</div>
+        <div class="meta">Administrador - Negocio Demo</div>
       </div>
     </div>
 
     <nav class="nav">
-      <a class="active" href="Inicio.html">🏠 Inicio</a>
-      <a href="citas.html">📅 Citas</a>
-      <a href="almacen.html">📦 Almacén</a>
-      <a href="caja.html">💰 Caja</a>
-      <a href="reportes.html">📊 Reportes</a>
-      <a href="index.html">🚪 Salir</a>
+      <a class="active" href="Inicio.html"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="citas.html"><i class="fa-solid fa-calendar-check"></i> Citas</a>
+      <a href="almacen.html"><i class="fa-solid fa-boxes-stacked"></i> Almacen</a>
+      <a href="caja.html"><i class="fa-solid fa-cash-register"></i> Caja</a>
+      <a href="reportes.html"><i class="fa-solid fa-chart-line"></i> Reportes</a>
+      <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
     </nav>
   </aside>
 
   <main class="main">
     <div class="topbar">
       <div class="title">
-        <h1>Hola, Miguel 👋</h1>
-        <p>Resumen rápido del día y accesos a los módulos.</p>
+        <h1 id="welcome-message">Hola</h1>
+        <p>Resumen rapido del dia y accesos a los modulos.</p>
       </div>
       <div class="top-actions">
-        <div class="pill">📅 Hoy</div>
-        <div class="pill">🔔 2</div>
+        <div class="pill"><i class="fa-solid fa-calendar-day"></i> Hoy</div>
+        <div class="pill"><i class="fa-solid fa-bell"></i> 0</div>
       </div>
     </div>
 
     <div class="content-grid">
       <section class="card">
-        <h3>Ingresos del día</h3>
+        <h3>Ingresos del dia</h3>
         <div class="kpi">
-          <div class="value">$ 1,250</div>
-          <div class="tag">+12% vs ayer</div>
+          <div class="value">$ 0</div>
+          <div class="tag">Sin ingresos registrados</div>
         </div>
-        <div class="bars" aria-label="Ventas por hora (demo)">
-          <div class="bar"><div style="height:40%"></div></div>
-          <div class="bar"><div style="height:55%"></div></div>
-          <div class="bar"><div style="height:20%"></div></div>
-          <div class="bar"><div style="height:70%"></div></div>
-          <div class="bar"><div style="height:35%"></div></div>
-          <div class="bar"><div style="height:80%"></div></div>
-          <div class="bar"><div style="height:50%"></div></div>
-          <div class="bar"><div style="height:30%"></div></div>
-        </div>
+        <div class="empty-state">No hay ventas registradas hoy.</div>
       </section>
 
       <aside class="card">
@@ -72,9 +64,7 @@
         <table class="table">
           <thead><tr><th>Hora</th><th>Evento</th></tr></thead>
           <tbody>
-            <tr><td>10:00</td><td>Cita: Cliente A</td></tr>
-            <tr><td>12:30</td><td>Venta registrada</td></tr>
-            <tr><td>16:00</td><td>Cita: Cliente B</td></tr>
+            <tr><td colspan="2" class="empty-state">Sin eventos programados.</td></tr>
           </tbody>
         </table>
 
@@ -86,12 +76,12 @@
     </div>
 
     <section class="card" style="margin-top:14px">
-      <h3>Accesos rápidos</h3>
+      <h3>Accesos rapidos</h3>
       <div class="actions">
-        <a class="btn-sm" href="citas.html">📅 Agendar cita</a>
-        <a class="btn-sm" href="almacen.html">📦 Agregar artículo/servicio</a>
-        <a class="btn-sm" href="caja.html">💰 Registrar venta</a>
-        <a class="btn-sm" href="reportes.html">📊 Ver reportes</a>
+        <a class="btn-sm" href="citas.html"><i class="fa-solid fa-calendar-plus"></i> Agendar cita</a>
+        <a class="btn-sm" href="almacen.html"><i class="fa-solid fa-boxes-stacked"></i> Agregar articulo/servicio</a>
+        <a class="btn-sm" href="caja.html"><i class="fa-solid fa-receipt"></i> Registrar venta</a>
+        <a class="btn-sm" href="reportes.html"><i class="fa-solid fa-chart-line"></i> Ver reportes</a>
       </div>
     </section>
 
@@ -99,5 +89,20 @@
 </div>
 
 <script src="js/ui.js"></script>
+<script>
+  (function () {
+    const stored = localStorage.getItem("user");
+    if (!stored) return;
+    try {
+      const user = JSON.parse(stored);
+      if (user && user.name) {
+        const el = document.getElementById("welcome-message");
+        if (el) el.textContent = `Hola, ${user.name}`;
+      }
+    } catch {
+      return;
+    }
+  })();
+</script>
 </body>
 </html>

@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MiNegocioApp | Citas</title>
 <link rel="stylesheet" href="assets/app.css"/>
@@ -15,16 +16,16 @@
       <div><div style="font-weight:800">MiNegocioApp</div><div class="muted" style="font-size:12px">Agenda</div></div>
     </div>
     <div class="side-user">
-      <div class="avatar">M</div>
-      <div><div class="name">Miguel</div><div class="meta">Administrador</div></div>
+      <div class="avatar">U</div>
+      <div><div class="name">Usuario</div><div class="meta">Administrador</div></div>
     </div>
     <nav class="nav">
-      <a href="Inicio.html">🏠 Inicio</a>
-      <a class="active" href="citas.html">📅 Citas</a>
-      <a href="almacen.html">📦 Almacén</a>
-      <a href="caja.html">💰 Caja</a>
-      <a href="reportes.html">📊 Reportes</a>
-      <a href="index.html">🚪 Salir</a>
+      <a href="Inicio.html"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a class="active" href="citas.html"><i class="fa-solid fa-calendar-check"></i> Citas</a>
+      <a href="almacen.html"><i class="fa-solid fa-boxes-stacked"></i> Almacen</a>
+      <a href="caja.html"><i class="fa-solid fa-cash-register"></i> Caja</a>
+      <a href="reportes.html"><i class="fa-solid fa-chart-line"></i> Reportes</a>
+      <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
     </nav>
   </aside>
 
@@ -32,26 +33,26 @@
     <div class="topbar">
       <div class="title">
         <h1>Citas</h1>
-        <p>Vista del día (demo) con intervalos y notas.</p>
+        <p>Vista del dia con intervalos y notas.</p>
       </div>
       <div class="top-actions">
         <button class="btn-sm primary" id="btnNuevaCita">+ Nueva cita</button>
-        <div class="pill">📅 Hoy</div>
+        <div class="pill"><i class="fa-solid fa-calendar-day"></i> Hoy</div>
       </div>
     </div>
 
     <div class="content-grid">
       <section class="card">
-        <h3>Agenda del día</h3>
+        <h3>Agenda del dia</h3>
         <table class="table" id="tablaCitas">
-          <thead><tr><th>Hora</th><th>Cliente</th><th>Nota</th><th>Estado</th></tr></thead>
+          <thead><tr><th>Fecha</th><th>Hora</th><th>Detalle</th><th>Nota</th><th>Estado</th></tr></thead>
           <tbody></tbody>
         </table>
       </section>
 
       <aside class="card">
-        <h3>Acciones rápidas</h3>
-        <p class="muted">Simulación: agrega una cita de ejemplo.</p>
+        <h3>Acciones rapidas</h3>
+        <p class="muted">Simulacion: agrega una cita de ejemplo.</p>
         <div class="actions" style="margin-top:10px">
           <button class="btn-sm" id="btnBloquear">Bloquear 14:00</button>
           <button class="btn-sm" id="btnCancelar">Cancelar 10:30</button>
@@ -59,7 +60,7 @@
         <div style="margin-top:12px">
           <span class="badge">Tip</span>
           <div class="muted" style="margin-top:8px; font-size:13px">
-            Puedes manejar “bloqueos” como citas con estado <b>Bloqueado</b>.
+            Puedes manejar "bloqueos" como citas con estado <b>Bloqueado</b>.
           </div>
         </div>
       </aside>
@@ -67,6 +68,32 @@
   </main>
 </div>
 
+<div class="modal-backdrop" id="appointmentBackdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 style="margin:0">Nueva cita</h3>
+      <button class="close" id="closeAppointment">x</button>
+    </div>
+    <form id="appointmentForm">
+      <div class="field">
+        <label>Fecha</label>
+        <input id="appointmentDate" type="date" required>
+      </div>
+      <div class="field">
+        <label>Hora</label>
+        <input id="appointmentTime" type="time" required>
+      </div>
+      <div class="field">
+        <label>Notas</label>
+        <input id="appointmentNotes" placeholder="Opcional">
+      </div>
+      <button class="btn" type="submit">Guardar cita</button>
+      <button class="btn secondary" id="cancelAppointment" type="button" style="margin-top:8px">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
 <script src="js/api.client.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/citas.js"></script>

@@ -1,7 +1,8 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
 <title>MiNegocioApp | Caja</title>
 <link rel="stylesheet" href="assets/app.css"/>
@@ -15,16 +16,16 @@
       <div><div style="font-weight:800">MiNegocioApp</div><div class="muted" style="font-size:12px">Caja</div></div>
     </div>
     <div class="side-user">
-      <div class="avatar">M</div>
-      <div><div class="name">Miguel</div><div class="meta">Administrador</div></div>
+      <div class="avatar">U</div>
+      <div><div class="name">Usuario</div><div class="meta">Administrador</div></div>
     </div>
     <nav class="nav">
-      <a href="Inicio.html">🏠 Inicio</a>
-      <a href="citas.html">📅 Citas</a>
-      <a href="almacen.html">📦 Almacén</a>
-      <a class="active" href="caja.html">💰 Caja</a>
-      <a href="reportes.html">📊 Reportes</a>
-      <a href="index.html">🚪 Salir</a>
+      <a href="Inicio.html"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="citas.html"><i class="fa-solid fa-calendar-check"></i> Citas</a>
+      <a href="almacen.html"><i class="fa-solid fa-boxes-stacked"></i> Almacen</a>
+      <a class="active" href="caja.html"><i class="fa-solid fa-cash-register"></i> Caja</a>
+      <a href="reportes.html"><i class="fa-solid fa-chart-line"></i> Reportes</a>
+      <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
     </nav>
   </aside>
 
@@ -32,19 +33,19 @@
     <div class="topbar">
       <div class="title">
         <h1>Caja</h1>
-        <p>Selecciona productos/servicios, arma el carrito y cobra (demo).</p>
+        <p>Selecciona productos/servicios, arma el carrito y cobra.</p>
       </div>
       <div class="top-actions">
-        <div class="pill">🧾 Ticket demo</div>
+        <div class="pill"><i class="fa-solid fa-ticket"></i> Ticket demo</div>
       </div>
     </div>
 
     <div class="content-grid">
       <section class="card">
-        <h3>Ingresos del día</h3>
+        <h3>Ingresos del dia</h3>
         <div class="kpi">
           <div class="value" id="ingresosDia">$ 0</div>
-          <div class="tag">Se reinicia cada día</div>
+          <div class="tag">Se reinicia cada dia</div>
         </div>
 
         <div style="margin-top:14px; display:flex; justify-content:space-between; align-items:center">
@@ -79,12 +80,11 @@
   </main>
 </div>
 
-<!-- Modal de cobro (demo) -->
 <div class="modal-backdrop" id="backdrop">
   <div class="modal">
     <div class="modal-head">
       <h3 style="margin:0">Cobro</h3>
-      <button class="close" id="cerrar">✕</button>
+      <button class="close" id="cerrar">x</button>
     </div>
 
     <div class="grid-two" style="margin-top:10px">
@@ -104,7 +104,7 @@
           <button>1</button><button>2</button><button>3</button>
           <button>4</button><button>5</button><button>6</button>
           <button>7</button><button>8</button><button>9</button>
-          <button>C</button><button>0</button><button>←</button>
+          <button>C</button><button>0</button><button>&lt;</button>
         </div>
         <button class="btn" id="confirmar" style="margin-top:10px">Confirmar pago</button>
         <button class="btn secondary" id="cancelar" style="margin-top:10px">Cancelar</button>
@@ -113,67 +113,9 @@
   </div>
 </div>
 
+<script src="js/config.js"></script>
 <script src="js/api.client.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/caja.js"></script>
-<!-- ================= MODAL CALCULADORA POS ================= -->
-<div class="modal-backdrop" id="modalCobro">
-
-  <div class="pos-modal">
-
-    <div class="pos-header">
-      <h3>Carrito</h3>
-      <button class="close-pos" onclick="cerrarCobro()">✕</button>
-    </div>
-
-    <div class="pos-item">
-      <div>
-        <strong>Shampoo</strong>
-        <div class="muted">x3 · $150.00</div>
-      </div>
-      <strong>$450.00</strong>
-    </div>
-
-    <div class="pos-summary">
-      <div class="row-pos">
-        <span>Monto recibido</span>
-        <strong id="montoRecibido">$0.00</strong>
-      </div>
-      <div class="row-pos">
-        <span>Cambio</span>
-        <strong id="cambio">$0.00</strong>
-      </div>
-      <div class="row-pos total">
-        <span>Total</span>
-        <strong>$450.00</strong>
-      </div>
-    </div>
-
-    <div class="pos-keypad">
-      <button onclick="agregarNumero('1')">1</button>
-      <button onclick="agregarNumero('2')">2</button>
-      <button onclick="agregarNumero('3')">3</button>
-
-      <button onclick="agregarNumero('4')">4</button>
-      <button onclick="agregarNumero('5')">5</button>
-      <button onclick="agregarNumero('6')">6</button>
-
-      <button onclick="agregarNumero('7')">7</button>
-      <button onclick="agregarNumero('8')">8</button>
-      <button onclick="agregarNumero('9')">9</button>
-
-      <button onclick="limpiar()">C</button>
-      <button onclick="agregarNumero('0')">0</button>
-      <button onclick="borrar()">⌫</button>
-    </div>
-
-<button class="btn-sm primary" onclick="abrirCobro()">
-  Cobrar
-</button>
-
-  </div>
-</div>
-<!-- ========================================================= -->
 </body>
 </html>
-

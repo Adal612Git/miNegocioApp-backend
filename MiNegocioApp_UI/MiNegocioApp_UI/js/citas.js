@@ -1,27 +1,45 @@
 (() => {
   const api = new ApiClient();
   const tableBody = document.querySelector("#tablaCitas tbody");
+  const backdrop = document.getElementById("appointmentBackdrop");
+  const form = document.getElementById("appointmentForm");
+  const dateInput = document.getElementById("appointmentDate");
+  const timeInput = document.getElementById("appointmentTime");
+  const notesInput = document.getElementById("appointmentNotes");
 
-  function formatTime(date) {
-    return date.toLocaleTimeString("es-MX", {
-      hour: "2-digit",
-      minute: "2-digit",
-    });
+  function formatDate(date) {
+    return date.toLocaleDateString("es-MX");
+  }
+
+  function getLocalDateString(value) {
+    const date = value ? new Date(value) : new Date();
+    const year = date.getFullYear();
+    const month = String(date.getMonth() + 1).padStart(2, "0");
+    const day = String(date.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
   }
 
   function renderAppointments(list) {
     if (!tableBody) return;
     tableBody.innerHTML = "";
 
+    if (!list.length) {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `<td colspan="5" class="empty-state">No hay citas registradas.</td>`;
+      tableBody.appendChild(tr);
+      return;
+    }
+
     list.forEach((item) => {
       const tr = document.createElement("tr");
-      const startAt = new Date(item.startAt || item.start_at);
-      const endAt = new Date(item.endAt || item.end_at);
+      const date = item.date ? new Date(item.date) : null;
+      const time = item.time || "";
       const status = item.status || "scheduled";
 
       tr.innerHTML = `
-        <td>${formatTime(startAt)} - ${formatTime(endAt)}</td>
-        <td>${item.title || ""}</td>
+        <td>${date ? formatDate(date) : "-"}</td>
+        <td>${time}</td>
+        <td>${item.title || item.notes || ""}</td>
         <td>${item.notes || "-"}</td>
         <td>${status}</td>
       `;
@@ -31,19 +49,11 @@
 
   async function loadAppointments() {
     try {
-      const now = new Date();
-      const start = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-      const end = new Date(
-        now.getFullYear(),
-        now.getMonth(),
-        now.getDate(),
-        23,
-        59,
-        59
-      );
+      const start = getLocalDateString();
+      const end = getLocalDateString();
 
       const data = await api.get(
-        `/appointments?start=${start.toISOString()}&end=${end.toISOString()}`
+        `/appointments?start_date=${start}&end_date=${end}`
       );
 
       renderAppointments(Array.isArray(data) ? data : []);
@@ -52,28 +62,42 @@
     }
   }
 
+  function openModal() {
+    if (!backdrop) return;
+    if (dateInput && !dateInput.value) {
+      dateInput.value = getLocalDateString();
+    }
+    if (timeInput && !timeInput.value) {
+      timeInput.value = "09:00";
+    }
+    backdrop.style.display = "flex";
+  }
+
+  function closeModal() {
+    if (!backdrop) return;
+    backdrop.style.display = "none";
+    if (form) form.reset();
+  }
+
   async function handleCreate(event) {
     event?.preventDefault?.();
+    const date = dateInput?.value || "";
+    const time = timeInput?.value || "";
+    const notes = notesInput?.value || "";
 
-    const title = prompt("Titulo de la cita");
-    const startAt = prompt("Inicio (YYYY-MM-DDTHH:mm)");
-    const endAt = prompt("Fin (YYYY-MM-DDTHH:mm)");
-    const notes = prompt("Notas (opcional)") || "";
-
-    if (!title || !startAt || !endAt) {
+    if (!date || !time) {
       alert("Completa los campos requeridos");
       return;
     }
 
     try {
       await api.post("/appointments", {
-        title: title.trim(),
-        start_at: new Date(startAt).toISOString(),
-        end_at: new Date(endAt).toISOString(),
-        notes,
+        date: date.trim(),
+        time: time.trim(),
+        notes: notes.trim(),
       });
       await loadAppointments();
-      alert("Cita creada");
+      closeModal();
     } catch (err) {
       if (err?.status === 409) {
         alert("Horario ocupado");
@@ -83,7 +107,10 @@
     }
   }
 
-  document.getElementById("btnNuevaCita")?.addEventListener("click", handleCreate);
+  document.getElementById("btnNuevaCita")?.addEventListener("click", openModal);
+  document.getElementById("closeAppointment")?.addEventListener("click", closeModal);
+  document.getElementById("cancelAppointment")?.addEventListener("click", closeModal);
+  form?.addEventListener("submit", handleCreate);
 
   loadAppointments();
 })();

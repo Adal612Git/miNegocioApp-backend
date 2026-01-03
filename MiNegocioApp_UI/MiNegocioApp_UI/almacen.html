@@ -1,9 +1,10 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="es">
 <head>
-<meta charset="UTF-8"/>
+<meta charset="UTF-8">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>MiNegocioApp | Almacén</title>
+<title>MiNegocioApp | Almacen</title>
 <link rel="stylesheet" href="assets/app.css"/>
 </head>
 <body>
@@ -15,29 +16,29 @@
       <div><div style="font-weight:800">MiNegocioApp</div><div class="muted" style="font-size:12px">Inventario</div></div>
     </div>
     <div class="side-user">
-      <div class="avatar">M</div>
-      <div><div class="name">Miguel</div><div class="meta">Administrador</div></div>
+      <div class="avatar">U</div>
+      <div><div class="name">Usuario</div><div class="meta">Administrador</div></div>
     </div>
     <nav class="nav">
-      <a href="Inicio.html">🏠 Inicio</a>
-      <a href="citas.html">📅 Citas</a>
-      <a class="active" href="almacen.html">📦 Almacén</a>
-      <a href="caja.html">💰 Caja</a>
-      <a href="reportes.html">📊 Reportes</a>
-      <a href="index.html">🚪 Salir</a>
+      <a href="Inicio.html"><i class="fa-solid fa-house"></i> Inicio</a>
+      <a href="citas.html"><i class="fa-solid fa-calendar-check"></i> Citas</a>
+      <a class="active" href="almacen.html"><i class="fa-solid fa-boxes-stacked"></i> Almacen</a>
+      <a href="caja.html"><i class="fa-solid fa-cash-register"></i> Caja</a>
+      <a href="reportes.html"><i class="fa-solid fa-chart-line"></i> Reportes</a>
+      <a href="index.html"><i class="fa-solid fa-right-from-bracket"></i> Salir</a>
     </nav>
   </aside>
 
   <main class="main">
     <div class="topbar">
       <div class="title">
-        <h1>Almacén</h1>
-        <p>Servicios y artículos (sin imágenes) para evitar saturación.</p>
+        <h1>Almacen</h1>
+        <p>Servicios y articulos (sin imagenes) para evitar saturacion.</p>
       </div>
       <div class="top-actions">
         <div class="tabs">
           <button class="tab active" id="tabServicios">Servicios</button>
-          <button class="tab" id="tabArticulos">Artículos</button>
+          <button class="tab" id="tabArticulos">Articulos</button>
         </div>
         <button class="btn-sm primary" id="btnAgregar">+ Agregar</button>
       </div>
@@ -46,16 +47,47 @@
     <section class="card">
       <h3 id="tituloLista">Servicios</h3>
       <table class="table" id="tablaItems">
-        <thead><tr><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead>
+        <thead><tr><th>Nombre</th><th>Categoria</th><th>Precio</th><th>Stock</th><th>Accion</th></tr></thead>
         <tbody></tbody>
       </table>
       <p class="muted" style="margin:10px 0 0; font-size:13px">
-        *En servicios el stock puede quedar en “—” (no aplica).
+        *En servicios el stock puede quedar en "0" (no aplica).
       </p>
     </section>
   </main>
 </div>
 
+<div class="modal-backdrop" id="itemBackdrop">
+  <div class="modal">
+    <div class="modal-head">
+      <h3 style="margin:0" id="itemModalTitle">Nuevo item</h3>
+      <button class="close" id="closeItem">x</button>
+    </div>
+    <form id="itemForm">
+      <div class="field">
+        <label>Nombre</label>
+        <input id="itemName" required>
+      </div>
+      <div class="field">
+        <label>Categoria</label>
+        <select id="itemCategory"></select>
+      </div>
+      <div class="field">
+        <label>Precio</label>
+        <input id="itemPrice" type="number" min="0" step="0.01" required>
+      </div>
+      <div class="field">
+        <label>Stock</label>
+        <input id="itemStock" type="number" min="0" step="1" required>
+      </div>
+      <button class="btn" type="submit">Guardar</button>
+      <button class="btn secondary" id="cancelItem" type="button" style="margin-top:8px">Cancelar</button>
+    </form>
+  </div>
+</div>
+
+<script src="js/config.js"></script>
+<script src="js/api.client.js"></script>
 <script src="js/ui.js"></script>
 <script src="js/almacen.js"></script>
 </body>

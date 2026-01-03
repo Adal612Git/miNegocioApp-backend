@@ -26,6 +26,11 @@ const forgotPasswordSchema = z.object({
   email: z.string().email(),
 });
 
+const resetPasswordSchema = z.object({
+  token: z.string().min(16),
+  password: z.string().min(8).max(128),
+});
+
 function signToken(payload: { userId: string; businessId: string }) {
   const secret = process.env.JWT_SECRET;
   if (!secret) {
@@ -193,7 +198,10 @@ export const AuthController = {
       });
 
       const baseUrl = process.env.APP_BASE_URL || "http://localhost:3000";
-      const resetUrl = `${baseUrl}/reset-password?token=${rawToken}`;
+      const normalizedBase = baseUrl.endsWith("/")
+        ? baseUrl.slice(0, -1)
+        : baseUrl;
+      const resetUrl = `${normalizedBase}/reset.html?token=${rawToken}`;
 
       await transporter.sendMail({
         from: smtpFrom,
@@ -203,6 +211,35 @@ export const AuthController = {
       });
 
       return res.status(200).json({ message: "RESET_EMAIL_SENT" });
+    } catch (err) {
+      return next(err);
+    }
+  },
+
+  resetPassword: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token, password } = resetPasswordSchema.parse(req.body);
+      const tokenHash = crypto
+        .createHash("sha256")
+        .update(token)
+        .digest("hex");
+
+      const reset = await PasswordResetModel.findOneAndDelete({
+        token_hash: tokenHash,
+        expires_at: { $gt: new Date() },
+      }).lean<{ user_id: mongoose.Types.ObjectId }>();
+
+      if (!reset?.user_id) {
+        return res.status(400).json({ message: "INVALID_TOKEN" });
+      }
+
+      const passwordHash = await bcrypt.hash(password, 12);
+      await UserModel.updateOne(
+        { _id: reset.user_id },
+        { $set: { password_hash: passwordHash } }
+      );
+
+      return res.status(200).json({ message: "PASSWORD_RESET_OK" });
     } catch (err) {
       return next(err);
     }
