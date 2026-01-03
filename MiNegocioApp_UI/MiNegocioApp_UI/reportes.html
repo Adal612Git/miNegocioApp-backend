@@ -1,0 +1,96 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MiNegocioApp | Reportes</title>
+<link rel="stylesheet" href="assets/app.css"/>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-top">
+      <div class="logo">MN</div>
+      <div><div style="font-weight:800">MiNegocioApp</div><div class="muted" style="font-size:12px">Reportes</div></div>
+    </div>
+    <div class="side-user">
+      <div class="avatar">M</div>
+      <div><div class="name">Miguel</div><div class="meta">Administrador</div></div>
+    </div>
+    <nav class="nav">
+      <a href="Inicio.html">🏠 Inicio</a>
+      <a href="citas.html">📅 Citas</a>
+      <a href="almacen.html">📦 Almacén</a>
+      <a href="caja.html">💰 Caja</a>
+      <a class="active" href="reportes.html">📊 Reportes</a>
+      <a href="index.html">🚪 Salir</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="title">
+        <h1>Reportes</h1>
+        <p>Rangos, comparativa mensual y exportación (demo).</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn-sm" id="btnAplicar">Aplicar rango</button>
+        <button class="btn-sm primary" id="btnPdf">Exportar PDF</button>
+      </div>
+    </div>
+
+    <section class="card">
+      <h3>Rango de fechas</h3>
+      <div class="row two">
+        <div class="field">
+          <label>Desde</label>
+          <input id="desde" type="date">
+        </div>
+        <div class="field">
+          <label>Hasta</label>
+          <input id="hasta" type="date">
+        </div>
+      </div>
+      <p class="muted" style="margin:0">*Datos precargados para visualización.</p>
+    </section>
+
+    <div class="content-grid" style="margin-top:14px">
+      <section class="card">
+        <h3>Comparativa</h3>
+        <table class="table">
+          <thead><tr><th>Periodo</th><th>Ingresos</th></tr></thead>
+          <tbody>
+            <tr><td>Mes actual</td><td id="mesActual">$ 8,500</td></tr>
+            <tr><td>Mes anterior</td><td id="mesAnterior">$ 7,200</td></tr>
+          </tbody>
+        </table>
+        <div class="bars">
+          <div class="bar"><div style="height:78%"></div></div>
+          <div class="bar"><div style="height:66%"></div></div>
+        </div>
+      </section>
+
+      <aside class="card">
+        <h3>Top productos</h3>
+        <table class="table" id="topProductos">
+          <thead><tr><th>Producto</th><th>Cant.</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </aside>
+    </div>
+
+    <section class="card" style="margin-top:14px">
+      <h3>Ventas en el rango</h3>
+      <table class="table" id="tablaVentas">
+        <thead><tr><th>Fecha</th><th>Concepto</th><th>Total</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </section>
+  </main>
+</div>
+
+<script src="js/ui.js"></script>
+<script src="js/reportes.js"></script>
+</body>
+</html>

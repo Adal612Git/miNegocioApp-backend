@@ -1,0 +1,47 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MiNegocioApp | Iniciar sesión</title>
+<link rel="stylesheet" href="assets/app.css"/>
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="logo">MN</div>
+      <div>
+        <div style="font-weight:900">MiNegocioApp</div>
+        <div class="muted" style="font-size:12px">Control simple para tu negocio</div>
+      </div>
+    </div>
+
+    <h2>Iniciar sesión</h2>
+    <p class="sub">Accede para ver ingresos, citas, inventario y reportes.</p>
+
+    <form id="loginForm">
+      <div class="field">
+        <label>Correo</label>
+        <input id="email" type="email" placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="field">
+        <label>Contraseña</label>
+        <input id="password" type="password" placeholder="••••••••">
+      </div>
+
+      <button id="loginButton" class="btn" type="submit">Entrar</button>
+    </form>
+
+    <div class="small">
+      ¿No tienes cuenta? <a class="link" href="register.html">Regístrate</a>
+    </div>
+  </div>
+</div>
+
+</body>
+<script src="js/api.client.js"></script>
+<script src="js/auth.js"></script>
+</html>

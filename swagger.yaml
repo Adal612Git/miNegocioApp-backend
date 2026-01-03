@@ -1,0 +1,275 @@
+openapi: 3.0.3
+info:
+  title: MiNegocioApp API
+  version: 1.0.0
+servers:
+  - url: /api
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    RegisterRequest:
+      type: object
+      required: [business_name, email, password]
+      properties:
+        business_name:
+          type: string
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+    Product:
+      type: object
+      properties:
+        _id:
+          type: string
+        name:
+          type: string
+        type:
+          type: string
+          enum: [product, service]
+        priceCents:
+          type: integer
+        stock:
+          type: integer
+        sku:
+          type: string
+    ProductCreate:
+      type: object
+      required: [name, type, price_cents, stock]
+      properties:
+        name:
+          type: string
+        type:
+          type: string
+          enum: [product, service]
+        price_cents:
+          type: integer
+        stock:
+          type: integer
+        sku:
+          type: string
+    ProductStockUpdate:
+      type: object
+      required: [stock]
+      properties:
+        stock:
+          type: integer
+    AppointmentCreate:
+      type: object
+      required: [title, start_at, end_at]
+      properties:
+        title:
+          type: string
+        start_at:
+          type: string
+          format: date-time
+        end_at:
+          type: string
+          format: date-time
+        notes:
+          type: string
+    Appointment:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        startAt:
+          type: string
+          format: date-time
+        endAt:
+          type: string
+          format: date-time
+        status:
+          type: string
+    SaleCreate:
+      type: object
+      required: [items, amount_paid_cents]
+      properties:
+        items:
+          type: array
+          items:
+            type: object
+            required: [product_id, quantity]
+            properties:
+              product_id:
+                type: string
+              quantity:
+                type: integer
+        amount_paid_cents:
+          type: integer
+    Sale:
+      type: object
+      properties:
+        _id:
+          type: string
+        totalCents:
+          type: integer
+        paidCents:
+          type: integer
+        changeCents:
+          type: integer
+paths:
+  /auth/register:
+    post:
+      summary: Register business and owner user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/RegisterRequest"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /auth/login:
+    post:
+      summary: Login user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LoginRequest"
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+  /products:
+    get:
+      security:
+        - bearerAuth: []
+      summary: List products
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Product"
+    post:
+      security:
+        - bearerAuth: []
+      summary: Create product
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+  /products/{id}/stock:
+    patch:
+      security:
+        - bearerAuth: []
+      summary: Update product stock
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ProductStockUpdate"
+      responses:
+        "200":
+          description: OK
+  /appointments:
+    get:
+      security:
+        - bearerAuth: []
+      summary: List appointments
+      parameters:
+        - name: start
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+        - name: end
+          in: query
+          required: true
+          schema:
+            type: string
+            format: date-time
+      responses:
+        "200":
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Appointment"
+    post:
+      security:
+        - bearerAuth: []
+      summary: Create appointment
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AppointmentCreate"
+      responses:
+        "201":
+          description: Created
+  /sales:
+    post:
+      security:
+        - bearerAuth: []
+      summary: Create sale
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SaleCreate"
+      responses:
+        "201":
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Sale"

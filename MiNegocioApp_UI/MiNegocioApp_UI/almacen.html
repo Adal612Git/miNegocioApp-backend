@@ -1,0 +1,62 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MiNegocioApp | Almacén</title>
+<link rel="stylesheet" href="assets/app.css"/>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-top">
+      <div class="logo">MN</div>
+      <div><div style="font-weight:800">MiNegocioApp</div><div class="muted" style="font-size:12px">Inventario</div></div>
+    </div>
+    <div class="side-user">
+      <div class="avatar">M</div>
+      <div><div class="name">Miguel</div><div class="meta">Administrador</div></div>
+    </div>
+    <nav class="nav">
+      <a href="Inicio.html">🏠 Inicio</a>
+      <a href="citas.html">📅 Citas</a>
+      <a class="active" href="almacen.html">📦 Almacén</a>
+      <a href="caja.html">💰 Caja</a>
+      <a href="reportes.html">📊 Reportes</a>
+      <a href="index.html">🚪 Salir</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="title">
+        <h1>Almacén</h1>
+        <p>Servicios y artículos (sin imágenes) para evitar saturación.</p>
+      </div>
+      <div class="top-actions">
+        <div class="tabs">
+          <button class="tab active" id="tabServicios">Servicios</button>
+          <button class="tab" id="tabArticulos">Artículos</button>
+        </div>
+        <button class="btn-sm primary" id="btnAgregar">+ Agregar</button>
+      </div>
+    </div>
+
+    <section class="card">
+      <h3 id="tituloLista">Servicios</h3>
+      <table class="table" id="tablaItems">
+        <thead><tr><th>Nombre</th><th>Categoría</th><th>Precio</th><th>Stock</th><th>Acción</th></tr></thead>
+        <tbody></tbody>
+      </table>
+      <p class="muted" style="margin:10px 0 0; font-size:13px">
+        *En servicios el stock puede quedar en “—” (no aplica).
+      </p>
+    </section>
+  </main>
+</div>
+
+<script src="js/ui.js"></script>
+<script src="js/almacen.js"></script>
+</body>
+</html>

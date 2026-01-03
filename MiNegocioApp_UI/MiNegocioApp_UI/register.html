@@ -1,0 +1,69 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MiNegocioApp | Registro</title>
+<link rel="stylesheet" href="assets/app.css"/>
+</head>
+<body>
+
+<div class="auth-wrap">
+  <div class="auth-card">
+    <div class="brand">
+      <div class="logo">MN</div>
+      <div>
+        <div style="font-weight:900">MiNegocioApp</div>
+        <div class="muted" style="font-size:12px">Crear cuenta (demo)</div>
+      </div>
+    </div>
+
+    <h2>Crear cuenta</h2>
+    <p class="sub">Solo para maqueta. No guarda datos reales.</p>
+
+    <form id="registerForm">
+      <div class="row two">
+        <div class="field">
+          <label>Nombre</label>
+          <input placeholder="Miguel">
+        </div>
+        <div class="field">
+          <label>Teléfono</label>
+          <input placeholder="33 0000 0000">
+        </div>
+      </div>
+
+      <div class="field">
+        <label>Correo</label>
+        <input id="email" type="email" placeholder="correo@ejemplo.com">
+      </div>
+
+      <div class="field">
+        <label>Nombre del negocio</label>
+        <input id="business_name" placeholder="Mi Tiendita / Barbería / Consultorio">
+      </div>
+
+      <div class="row two">
+        <div class="field">
+          <label>Contraseña</label>
+          <input id="password" type="password" placeholder="••••••••">
+        </div>
+        <div class="field">
+          <label>Confirmar</label>
+          <input id="password_confirm" type="password" placeholder="••••••••">
+        </div>
+      </div>
+
+      <button id="registerButton" class="btn" type="submit">Crear cuenta</button>
+    </form>
+
+    <div class="small">
+      ¿Ya tienes cuenta? <a class="link" href="index.html">Inicia sesión</a>
+    </div>
+  </div>
+</div>
+
+</body>
+<script src="js/api.client.js"></script>
+<script src="js/auth.js"></script>
+</html>

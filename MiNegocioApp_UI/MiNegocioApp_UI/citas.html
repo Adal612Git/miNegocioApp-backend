@@ -1,0 +1,74 @@
+﻿<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MiNegocioApp | Citas</title>
+<link rel="stylesheet" href="assets/app.css"/>
+</head>
+<body>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="side-top">
+      <div class="logo">MN</div>
+      <div><div style="font-weight:800">MiNegocioApp</div><div class="muted" style="font-size:12px">Agenda</div></div>
+    </div>
+    <div class="side-user">
+      <div class="avatar">M</div>
+      <div><div class="name">Miguel</div><div class="meta">Administrador</div></div>
+    </div>
+    <nav class="nav">
+      <a href="Inicio.html">🏠 Inicio</a>
+      <a class="active" href="citas.html">📅 Citas</a>
+      <a href="almacen.html">📦 Almacén</a>
+      <a href="caja.html">💰 Caja</a>
+      <a href="reportes.html">📊 Reportes</a>
+      <a href="index.html">🚪 Salir</a>
+    </nav>
+  </aside>
+
+  <main class="main">
+    <div class="topbar">
+      <div class="title">
+        <h1>Citas</h1>
+        <p>Vista del día (demo) con intervalos y notas.</p>
+      </div>
+      <div class="top-actions">
+        <button class="btn-sm primary" id="btnNuevaCita">+ Nueva cita</button>
+        <div class="pill">📅 Hoy</div>
+      </div>
+    </div>
+
+    <div class="content-grid">
+      <section class="card">
+        <h3>Agenda del día</h3>
+        <table class="table" id="tablaCitas">
+          <thead><tr><th>Hora</th><th>Cliente</th><th>Nota</th><th>Estado</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </section>
+
+      <aside class="card">
+        <h3>Acciones rápidas</h3>
+        <p class="muted">Simulación: agrega una cita de ejemplo.</p>
+        <div class="actions" style="margin-top:10px">
+          <button class="btn-sm" id="btnBloquear">Bloquear 14:00</button>
+          <button class="btn-sm" id="btnCancelar">Cancelar 10:30</button>
+        </div>
+        <div style="margin-top:12px">
+          <span class="badge">Tip</span>
+          <div class="muted" style="margin-top:8px; font-size:13px">
+            Puedes manejar “bloqueos” como citas con estado <b>Bloqueado</b>.
+          </div>
+        </div>
+      </aside>
+    </div>
+  </main>
+</div>
+
+<script src="js/api.client.js"></script>
+<script src="js/ui.js"></script>
+<script src="js/citas.js"></script>
+</body>
+</html>
