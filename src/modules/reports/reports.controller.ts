@@ -5,8 +5,8 @@ import mongoose from "mongoose";
 import { SaleModel } from "../sales/sales.model";
 
 const salesReportSchema = z.object({
-  start_date: z.string().date({ message: "Fecha inválida" }),
-  end_date: z.string().date({ message: "Fecha inválida" }),
+  start_date: z.string().date("Fecha invalida"),
+  end_date: z.string().date("Fecha invalida"),
 });
 
 export const ReportsController = {

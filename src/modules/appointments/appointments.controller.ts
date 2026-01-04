@@ -4,15 +4,15 @@ import { z } from "zod";
 import { AppointmentModel } from "./appointments.model";
 
 const createSchema = z.object({
-  date: z.string().date({ message: "Fecha inválida" }),
-  time: z.string().min(3, { message: "Hora inválida" }).max(10),
+  date: z.string().date("Fecha invalida"),
+  time: z.string().min(3, { message: "Hora invalida" }).max(10),
   notes: z.string().max(500).optional(),
   status: z.enum(["scheduled", "cancelled", "completed"]).optional(),
 });
 
 const listSchema = z.object({
-  start_date: z.string().date({ message: "Fecha inválida" }).optional(),
-  end_date: z.string().date({ message: "Fecha inválida" }).optional(),
+  start_date: z.string().date("Fecha invalida").optional(),
+  end_date: z.string().date("Fecha invalida").optional(),
 });
 
 export const AppointmentsController = {
@@ -72,7 +72,7 @@ export const AppointmentsController = {
       const endDate = new Date(end_date);
 
       if (endDate.getTime() < startDate.getTime()) {
-        return res.status(400).json({ message: "Rango de fechas inválido" });
+        return res.status(400).json({ message: "Rango de fechas invalido" });
       }
 
       const appointments = await AppointmentModel.find({
