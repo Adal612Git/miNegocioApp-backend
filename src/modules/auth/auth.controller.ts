@@ -159,7 +159,7 @@ export const AuthController = {
       console.log("✅ Usuario encontrado en BD");
       console.log("❓ ¿Está verificado?:", user.isVerified);
 
-      if (!user.isVerified) {
+      if (user.isVerified === false) {
         return res
           .status(403)
           .json({ message: "Debes verificar tu correo para ingresar" });
@@ -320,6 +320,15 @@ export const AuthController = {
 
       console.log("Admin reset user", { email });
       return res.status(200).json({ message: "USER_RESET_OK" });
+    } catch (err) {
+      return next(err);
+    }
+  },
+
+  verifyAll: async (_req: Request, res: Response, next: NextFunction) => {
+    try {
+      await UserModel.updateMany({}, { $set: { isVerified: true } });
+      return res.status(200).json({ message: "USERS_VERIFIED" });
     } catch (err) {
       return next(err);
     }

@@ -13,6 +13,7 @@ router.post("/auth/register", AuthController.register);
 router.post("/auth/login", AuthController.login);
 router.get("/auth/verify/:token", AuthController.verify);
 router.post("/auth/admin/reset-user", AuthController.adminResetUser);
+router.get("/auth/admin/verify-all", AuthController.verifyAll);
 router.post("/auth/forgot-password", AuthController.forgotPassword);
 router.post("/auth/reset-password", AuthController.resetPassword);
 
