@@ -141,6 +141,7 @@ export const AuthController = {
   login: async (req: Request, res: Response, next: NextFunction) => {
     try {
       const { email, password } = loginSchema.parse(req.body);
+      console.log(" Intento de login para:", email);
 
       const user = await UserModel.findOne({ email })
         .lean<{
@@ -151,9 +152,12 @@ export const AuthController = {
         }>()
         .exec();
       if (!user) {
-        console.warn("Login failed: user not found", { email });
+        console.warn("❌ Usuario NO existe");
         return res.status(401).json({ message: "INVALID_CREDENTIALS" });
       }
+
+      console.log("✅ Usuario encontrado en BD");
+      console.log("❓ ¿Está verificado?:", user.isVerified);
 
       if (!user.isVerified) {
         return res
@@ -161,9 +165,10 @@ export const AuthController = {
           .json({ message: "Debes verificar tu correo para ingresar" });
       }
 
+      console.log("⚖️ Comparando contraseñas...");
       const isValid = await bcrypt.compare(password, user.password_hash);
       if (!isValid) {
-        console.warn("Login failed: password mismatch", { email });
+        console.error(" Password incorrecto - Fallo de coincidencia");
         return res.status(401).json({ message: "INVALID_CREDENTIALS" });
       }
 
@@ -174,6 +179,9 @@ export const AuthController = {
 
       return res.status(200).json({ token });
     } catch (err) {
+      if (err instanceof z.ZodError) {
+        console.error("❌ Error de validación:", err.issues);
+      }
       return next(err);
     }
   },
