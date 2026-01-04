@@ -12,7 +12,7 @@ export const sendEmail = async ({
   html: string;
 }) => {
   const { data, error } = await resend.emails.send({
-    from: "Loto App <onboarding@resend.dev>",
+    from: "Loto App <soporte@lotosproductions.com>",
     to,
     subject,
     html,

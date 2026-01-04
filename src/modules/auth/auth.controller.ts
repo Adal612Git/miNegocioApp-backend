@@ -56,11 +56,17 @@ export const AuthController = {
         req.body
       );
 
+      const smtpPass = process.env.SMTP_PASS;
+      if (!smtpPass) {
+        return res.status(500).json({ message: "SMTP_NOT_CONFIGURED" });
+      }
+
       const existing = await UserModel.exists({ email });
       if (existing) {
         return res.status(409).json({ message: "EMAIL_ALREADY_EXISTS" });
       }
 
+      const verificationToken = crypto.randomBytes(32).toString("hex");
       const userObjectId = new mongoose.Types.ObjectId();
       const businessObjectId = new mongoose.Types.ObjectId();
       const passwordHash = await bcrypt.hash(password, 12);
@@ -88,6 +94,8 @@ export const AuthController = {
               name,
               email,
               password_hash: passwordHash,
+              isVerified: false,
+              verificationToken,
             },
           ],
           session ? { session } : undefined
@@ -116,6 +124,13 @@ export const AuthController = {
         return res.status(500).json({ message: "REGISTER_FAILED" });
       }
 
+      const verifyUrl = `https://app.lotosproductions.com/verify.html?token=${verificationToken}`;
+      await sendEmail({
+        to: email,
+        subject: "Bienvenida y verificacion de cuenta",
+        html: `Bienvenido a Loto App. Verifica tu cuenta aqui: <a href="${verifyUrl}">${verifyUrl}</a>`,
+      });
+
       const token = signToken({ userId, businessId });
       return res.status(201).json({ token });
     } catch (err) {
@@ -132,10 +147,15 @@ export const AuthController = {
           _id: mongoose.Types.ObjectId;
           business_id: mongoose.Types.ObjectId;
           password_hash: string;
+          isVerified?: boolean;
         }>()
         .exec();
       if (!user) {
         return res.status(401).json({ message: "INVALID_CREDENTIALS" });
+      }
+
+      if (!user.isVerified) {
+        return res.status(403).json({ message: "Cuenta no verificada" });
       }
 
       const isValid = await bcrypt.compare(password, user.password_hash);
@@ -226,6 +246,31 @@ export const AuthController = {
       );
 
       return res.status(200).json({ message: "PASSWORD_RESET_OK" });
+    } catch (err) {
+      return next(err);
+    }
+  },
+
+  verify: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const { token } = req.params;
+      if (!token) {
+        return res.status(400).json({ message: "INVALID_TOKEN" });
+      }
+
+      const verified = await UserModel.findOneAndUpdate(
+        { verificationToken: token },
+        { $set: { isVerified: true }, $unset: { verificationToken: "" } },
+        { new: true }
+      )
+        .lean<{ _id: mongoose.Types.ObjectId }>()
+        .exec();
+
+      if (!verified) {
+        return res.status(400).json({ message: "INVALID_TOKEN" });
+      }
+
+      return res.status(200).json({ message: "ACCOUNT_VERIFIED" });
     } catch (err) {
       return next(err);
     }
