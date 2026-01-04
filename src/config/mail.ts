@@ -1,20 +1,28 @@
-import nodemailer from "nodemailer";
+import { Resend } from "resend";
 
-export const transporter = nodemailer.createTransport({
-  host: "smtp.resend.com",
-  port: 465,
-  secure: true,
-  auth: {
-    user: "resend",
-    pass: process.env.SMTP_PASS,
-  },
-});
+const resend = new Resend(process.env.SMTP_PASS);
 
-transporter
-  .verify()
-  .then(() => {
-    console.log("✅ RESEND conectado - Sistema de correos Blindado");
-  })
-  .catch((error) => {
-    console.error("❌ Error en Resend:", error.message);
+export const sendEmail = async ({
+  to,
+  subject,
+  html,
+}: {
+  to: string;
+  subject: string;
+  html: string;
+}) => {
+  const { data, error } = await resend.emails.send({
+    from: "Loto App <onboarding@resend.dev>",
+    to,
+    subject,
+    html,
   });
+
+  if (error) {
+    console.error("❌ Error de Resend API:", error);
+    throw error;
+  }
+
+  console.log("✅ Correo enviado via API:", data?.id);
+  return data;
+};

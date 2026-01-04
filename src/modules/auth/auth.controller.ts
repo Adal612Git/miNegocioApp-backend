@@ -4,7 +4,7 @@ import bcrypt from "bcryptjs";
 import jwt, { type SignOptions } from "jsonwebtoken";
 import mongoose from "mongoose";
 import crypto from "crypto";
-import { transporter } from "../../config/mail";
+import { sendEmail } from "../../config/mail";
 
 import { BusinessModel } from "./business.model";
 import { UserModel } from "./user.model";
@@ -179,7 +179,6 @@ export const AuthController = {
       });
 
       const smtpPass = process.env.SMTP_PASS;
-      const smtpFrom = "Loto App <onboarding@resend.dev>";
 
       if (!smtpPass) {
         return res.status(500).json({ message: "SMTP_NOT_CONFIGURED" });
@@ -191,11 +190,10 @@ export const AuthController = {
         : baseUrl;
       const resetUrl = `${normalizedBase}/reset.html?token=${rawToken}`;
 
-      await transporter.sendMail({
-        from: smtpFrom,
+      await sendEmail({
         to: email,
         subject: "Recuperacion de cuenta",
-        text: `Usa este enlace para recuperar tu cuenta: ${resetUrl}`,
+        html: `Usa este enlace para recuperar tu cuenta: <a href="${resetUrl}">${resetUrl}</a>`,
       });
 
       return res.status(200).json({ message: "RESET_EMAIL_SENT" });
