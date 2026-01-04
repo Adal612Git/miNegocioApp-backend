@@ -155,7 +155,9 @@ export const AuthController = {
       }
 
       if (!user.isVerified) {
-        return res.status(403).json({ message: "Cuenta no verificada" });
+        return res
+          .status(403)
+          .json({ message: "Debes verificar tu correo para ingresar" });
       }
 
       const isValid = await bcrypt.compare(password, user.password_hash);
@@ -268,6 +270,11 @@ export const AuthController = {
 
       if (!verified) {
         return res.status(400).json({ message: "INVALID_TOKEN" });
+      }
+
+      const acceptHeader = req.get("accept") || "";
+      if (acceptHeader.includes("text/html")) {
+        return res.redirect(302, "https://app.lotosproductions.com/index.html");
       }
 
       return res.status(200).json({ message: "ACCOUNT_VERIFIED" });
