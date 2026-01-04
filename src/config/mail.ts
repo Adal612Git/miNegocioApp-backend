@@ -1,24 +1,20 @@
 import nodemailer from "nodemailer";
 
 export const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com",
-  port: 587,
-  secure: false,
+  host: "smtp.resend.com",
+  port: 465,
+  secure: true,
   auth: {
-    user: process.env.SMTP_USER,
+    user: "resend",
     pass: process.env.SMTP_PASS,
   },
-  tls: {
-    rejectUnauthorized: false,
-  },
-  connectionTimeout: 10000,
 });
 
 transporter
   .verify()
   .then(() => {
-    console.log("✅ Conexión SMTP (Puerto 587) exitosa");
+    console.log("✅ RESEND conectado - Sistema de correos Blindado");
   })
   .catch((error) => {
-    console.error("❌ Error en 587:", error.message);
+    console.error("❌ Error en Resend:", error.message);
   });

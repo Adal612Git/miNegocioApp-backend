@@ -178,11 +178,10 @@ export const AuthController = {
         expires_at: expiresAt,
       });
 
-      const smtpUser = process.env.SMTP_USER;
       const smtpPass = process.env.SMTP_PASS;
-      const smtpFrom = process.env.SMTP_FROM;
+      const smtpFrom = "Loto App <onboarding@resend.dev>";
 
-      if (!smtpUser || !smtpPass || !smtpFrom) {
+      if (!smtpPass) {
         return res.status(500).json({ message: "SMTP_NOT_CONFIGURED" });
       }
 
