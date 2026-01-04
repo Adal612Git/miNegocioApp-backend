@@ -4,22 +4,89 @@ import bcrypt from "bcryptjs";
 import jwt, { type SignOptions } from "jsonwebtoken";
 import mongoose from "mongoose";
 import crypto from "crypto";
+import { promises as dns } from "dns";
 import { sendEmail } from "../../config/mail";
 
 import { BusinessModel } from "./business.model";
 import { UserModel } from "./user.model";
 import { PasswordResetModel } from "./password-reset.model";
 
+const blockedEmailDomains = new Set([
+  "example.com",
+  "example.net",
+  "example.org",
+  "test.com",
+  "test.net",
+  "test.org",
+  "mailinator.com",
+  "yopmail.com",
+  "tempmail.com",
+  "10minutemail.com",
+  "asd.com",
+]);
+
+const emailDomainCache = new Map<string, boolean>();
+
+async function hasValidEmailDomain(email: string) {
+  const parts = String(email || "").toLowerCase().split("@");
+  if (parts.length !== 2) return false;
+  const domain = parts[1].trim();
+  if (!domain || blockedEmailDomains.has(domain)) return false;
+  const domainParts = domain.split(".");
+  if (domainParts.length < 2) return false;
+  const tld = domainParts[domainParts.length - 1];
+  if (!tld || tld.length < 2) return false;
+
+  if (process.env.NODE_ENV === "test" || process.env.SKIP_EMAIL_DOMAIN_CHECK === "true") {
+    return true;
+  }
+
+  if (emailDomainCache.has(domain)) {
+    return emailDomainCache.get(domain) === true;
+  }
+
+  try {
+    const records = await dns.resolveMx(domain);
+    const isValid = Array.isArray(records) && records.length > 0;
+    emailDomainCache.set(domain, isValid);
+    return isValid;
+  } catch {
+    emailDomainCache.set(domain, false);
+    return false;
+  }
+}
+
 const registerSchema = z.object({
-  business_name: z.string().min(2).max(120),
-  name: z.string().min(2).max(120),
-  email: z.string().email(),
-  password: z.string().min(8).max(128),
+  business_name: z
+    .string()
+    .min(2, { message: "Nombre del negocio requerido" })
+    .max(120, { message: "Nombre del negocio demasiado largo" }),
+  name: z
+    .string()
+    .min(2, { message: "Nombre demasiado corto" })
+    .max(50, { message: "Nombre demasiado largo" }),
+  phone: z
+    .coerce
+    .string()
+    .regex(/^\d{10}$/, { message: "Formato de teléfono inválido" }),
+  email: z
+    .string()
+    .email({ message: "Formato de correo inválido" })
+    .refine(async (value) => hasValidEmailDomain(value), {
+      message: "Dominio de correo inválido",
+    }),
+  password: z
+    .string()
+    .min(8, { message: "Contraseña demasiado corta" })
+    .max(128, { message: "Contraseña demasiado larga" }),
 });
 
 const loginSchema = z.object({
-  email: z.string().email(),
-  password: z.string().min(8).max(128),
+  email: z.string().email({ message: "Formato de correo inválido" }),
+  password: z
+    .string()
+    .min(8, { message: "Contraseña demasiado corta" })
+    .max(128, { message: "Contraseña demasiado larga" }),
 });
 
 const forgotPasswordSchema = z.object({
@@ -52,18 +119,17 @@ function isReplicaSetError(err: unknown) {
 export const AuthController = {
   register: async (req: Request, res: Response, next: NextFunction) => {
     try {
-      const { business_name, name, email, password } = registerSchema.parse(
-        req.body
-      );
+      const { business_name, name, phone, email, password } =
+        await registerSchema.parseAsync(req.body);
 
       const smtpPass = process.env.SMTP_PASS;
       if (!smtpPass) {
-        return res.status(500).json({ message: "SMTP_NOT_CONFIGURED" });
+        return res.status(500).json({ message: "Configuración de correo no disponible" });
       }
 
       const existing = await UserModel.exists({ email });
       if (existing) {
-        return res.status(409).json({ message: "EMAIL_ALREADY_EXISTS" });
+        return res.status(409).json({ message: "El correo ya existe" });
       }
 
       const verificationToken = crypto.randomBytes(32).toString("hex");
@@ -93,6 +159,7 @@ export const AuthController = {
               business_id: businessObjectId,
               name,
               email,
+              phone,
               password_hash: passwordHash,
               isVerified: false,
               verificationToken,
@@ -121,7 +188,7 @@ export const AuthController = {
       }
 
       if (!businessId || !userId) {
-        return res.status(500).json({ message: "REGISTER_FAILED" });
+        return res.status(500).json({ message: "No se pudo completar el registro" });
       }
 
       const verifyUrl = `https://app.lotosproductions.com/verify.html?token=${verificationToken}`;
@@ -153,7 +220,7 @@ export const AuthController = {
         .exec();
       if (!user) {
         console.warn("❌ Usuario NO existe");
-        return res.status(401).json({ message: "INVALID_CREDENTIALS" });
+        return res.status(401).json({ message: "Credenciales inválidas" });
       }
 
       console.log("✅ Usuario encontrado en BD");
@@ -169,7 +236,7 @@ export const AuthController = {
       const isValid = await bcrypt.compare(password, user.password_hash);
       if (!isValid) {
         console.error(" Password incorrecto - Fallo de coincidencia");
-        return res.status(401).json({ message: "INVALID_CREDENTIALS" });
+        return res.status(401).json({ message: "Credenciales inválidas" });
       }
 
       const token = signToken({
@@ -320,6 +387,39 @@ export const AuthController = {
 
       console.log("Admin reset user", { email });
       return res.status(200).json({ message: "USER_RESET_OK" });
+    } catch (err) {
+      return next(err);
+    }
+  },
+
+  me: async (req: Request, res: Response, next: NextFunction) => {
+    try {
+      const userId = req.auth?.userId;
+      if (!userId) {
+        return res.status(401).json({ message: "No autorizado" });
+      }
+
+      const user = await UserModel.findById(userId)
+        .lean<{
+          _id: mongoose.Types.ObjectId;
+          business_id: mongoose.Types.ObjectId;
+          name: string;
+          email: string;
+          phone?: string;
+        }>()
+        .exec();
+
+      if (!user) {
+        return res.status(404).json({ message: "Usuario no encontrado" });
+      }
+
+      return res.status(200).json({
+        id: user._id.toString(),
+        business_id: user.business_id.toString(),
+        name: user.name,
+        email: user.email,
+        phone: user.phone || null,
+      });
     } catch (err) {
       return next(err);
     }

@@ -19,6 +19,9 @@ router.post("/auth/reset-password", AuthController.resetPassword);
 
 router.use(authMiddleware);
 
+router.get("/me", AuthController.me);
+router.get("/profile", AuthController.me);
+
 router.post("/sales", SalesController.create);
 router.post("/sales/change", SalesController.calculateChange);
 

@@ -8,7 +8,8 @@ async function registerAndGetToken() {
   const register = await request(app).post("/api/auth/register").send({
     business_name: "Sales Biz",
     name: "Owner Sales",
-    email: "sales@example.com",
+    phone: "5551234567",
+    email: "sales@gmail.com",
     password: "StrongPass123",
   });
 
@@ -27,7 +28,7 @@ describe("Sales", () => {
       name: "Shampoo",
       price: 500,
       stock: 10,
-      category: "higiene",
+      category: "Producto",
       is_active: true,
     });
 
@@ -65,7 +66,7 @@ describe("Sales", () => {
       name: "Gel",
       price: 300,
       stock: 1,
-      category: "peinado",
+      category: "Producto",
       is_active: true,
     });
 
@@ -78,6 +79,6 @@ describe("Sales", () => {
       });
 
     expect(res.status).toBe(409);
-    expect(res.body.message).toBe("OUT_OF_STOCK");
+    expect(res.body.message).toBe("Stock insuficiente");
   });
 });

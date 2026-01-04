@@ -3,22 +3,45 @@ import { z } from "zod";
 
 import { ProductModel } from "./products.model";
 
+const allowedCategories = new Set(
+  ["servicio", "paquete", "otro", "producto", "insumo"].map((item) =>
+    item.toLowerCase()
+  )
+);
+
+function normalizeCategory(value: string) {
+  return String(value || "").trim().toLowerCase();
+}
+
 const createSchema = z.object({
-  name: z.string().min(1).max(120),
-  price: z.number().min(0),
-  stock: z.number().int().min(0),
-  category: z.string().min(1).max(120),
+  name: z.string().min(1, { message: "Nombre requerido" }).max(120),
+  price: z.coerce.number().min(0, { message: "Precio inválido" }),
+  stock: z.coerce.number().int().min(0, { message: "Stock inválido" }),
+  category: z
+    .string()
+    .min(1, { message: "Categoría requerida" })
+    .max(120)
+    .refine((value) => allowedCategories.has(normalizeCategory(value)), {
+      message: "Categoría inválida",
+    }),
 });
 
 const updateSchema = z.object({
-  name: z.string().min(1).max(120).optional(),
-  price: z.number().min(0).optional(),
-  stock: z.number().int().min(0).optional(),
-  category: z.string().min(1).max(120).optional(),
+  name: z.string().min(1, { message: "Nombre requerido" }).max(120).optional(),
+  price: z.coerce.number().min(0, { message: "Precio inválido" }).optional(),
+  stock: z.coerce.number().int().min(0, { message: "Stock inválido" }).optional(),
+  category: z
+    .string()
+    .min(1, { message: "Categoría requerida" })
+    .max(120)
+    .optional()
+    .refine((value) => (value ? allowedCategories.has(normalizeCategory(value)) : true), {
+      message: "Categoría inválida",
+    }),
 });
 
 const updateStockSchema = z.object({
-  stock: z.number().int().min(0),
+  stock: z.coerce.number().int().min(0, { message: "Stock inválido" }),
 });
 
 export const ProductsController = {
@@ -26,7 +49,7 @@ export const ProductsController = {
     try {
       const businessId = req.auth?.businessId;
       if (!businessId) {
-        return res.status(401).json({ message: "UNAUTHORIZED" });
+        return res.status(401).json({ message: "No autorizado" });
       }
 
       const products = await ProductModel.find({
@@ -45,7 +68,7 @@ export const ProductsController = {
       const { name, price, stock, category } = createSchema.parse(req.body);
       const businessId = req.auth?.businessId;
       if (!businessId) {
-        return res.status(401).json({ message: "UNAUTHORIZED" });
+        return res.status(401).json({ message: "No autorizado" });
       }
 
       const product = await ProductModel.create({
@@ -68,7 +91,7 @@ export const ProductsController = {
       const { stock } = updateStockSchema.parse(req.body);
       const businessId = req.auth?.businessId;
       if (!businessId) {
-        return res.status(401).json({ message: "UNAUTHORIZED" });
+        return res.status(401).json({ message: "No autorizado" });
       }
       const productId = req.params.id;
 
@@ -93,7 +116,7 @@ export const ProductsController = {
       const updates = updateSchema.parse(req.body);
       const businessId = req.auth?.businessId;
       if (!businessId) {
-        return res.status(401).json({ message: "UNAUTHORIZED" });
+        return res.status(401).json({ message: "No autorizado" });
       }
       const productId = req.params.id;
 
@@ -117,7 +140,7 @@ export const ProductsController = {
     try {
       const businessId = req.auth?.businessId;
       if (!businessId) {
-        return res.status(401).json({ message: "UNAUTHORIZED" });
+        return res.status(401).json({ message: "No autorizado" });
       }
       const productId = req.params.id;
 

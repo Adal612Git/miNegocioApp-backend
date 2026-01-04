@@ -18,17 +18,17 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
   try {
     const token = getTokenFromHeader(req);
     if (!token) {
-      return res.status(401).json({ message: "UNAUTHORIZED" });
+      return res.status(401).json({ message: "No autorizado" });
     }
 
     const secret = process.env.JWT_SECRET;
     if (!secret) {
-      return res.status(500).json({ message: "JWT_SECRET_MISSING" });
+      return res.status(500).json({ message: "Error interno del servidor" });
     }
 
     const payload = jwt.verify(token, secret) as AuthPayload;
     if (!payload?.userId || !payload?.businessId) {
-      return res.status(401).json({ message: "UNAUTHORIZED" });
+      return res.status(401).json({ message: "No autorizado" });
     }
 
     (req as Request & { auth: AuthPayload }).auth = {
@@ -38,6 +38,6 @@ export function authMiddleware(req: Request, res: Response, next: NextFunction) 
 
     return next();
   } catch {
-    return res.status(401).json({ message: "UNAUTHORIZED" });
+    return res.status(401).json({ message: "No autorizado" });
   }
 }

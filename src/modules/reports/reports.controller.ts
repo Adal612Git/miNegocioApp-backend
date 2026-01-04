@@ -5,8 +5,8 @@ import mongoose from "mongoose";
 import { SaleModel } from "../sales/sales.model";
 
 const salesReportSchema = z.object({
-  start_date: z.string().date(),
-  end_date: z.string().date(),
+  start_date: z.string().date({ message: "Fecha inválida" }),
+  end_date: z.string().date({ message: "Fecha inválida" }),
 });
 
 export const ReportsController = {
@@ -15,7 +15,7 @@ export const ReportsController = {
       const { start_date, end_date } = salesReportSchema.parse(req.query);
       const businessId = req.auth?.businessId;
       if (!businessId) {
-        return res.status(401).json({ message: "UNAUTHORIZED" });
+        return res.status(401).json({ message: "No autorizado" });
       }
 
       const startDate = new Date(start_date);

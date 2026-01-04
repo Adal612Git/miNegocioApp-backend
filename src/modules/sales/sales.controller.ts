@@ -8,16 +8,16 @@ const createSaleSchema = z.object({
     .array(
       z.object({
         product_id: z.string().min(1),
-        quantity: z.number().int().min(1),
+        quantity: z.coerce.number().int().min(1, { message: "Cantidad inválida" }),
       })
     )
     .min(1),
-  amount_paid: z.number().min(0),
+  amount_paid: z.coerce.number().min(0, { message: "Monto inválido" }),
 });
 
 const changeSchema = z.object({
-  total: z.number().min(0),
-  monto_recibido: z.number().min(0),
+  total: z.coerce.number().min(0, { message: "Total inválido" }),
+  monto_recibido: z.coerce.number().min(0, { message: "Monto inválido" }),
 });
 
 export const SalesController = {
@@ -27,7 +27,7 @@ export const SalesController = {
 
       const businessId = req.auth?.businessId;
       if (!businessId) {
-        return res.status(401).json({ message: "UNAUTHORIZED" });
+        return res.status(401).json({ message: "No autorizado" });
       }
 
       const sale = await SalesService.createSale({
@@ -39,13 +39,13 @@ export const SalesController = {
       return res.status(201).json(sale);
     } catch (err: any) {
       if (err && err.code === "OUT_OF_STOCK") {
-        return res.status(409).json({ message: "OUT_OF_STOCK" });
+        return res.status(409).json({ message: "Stock insuficiente" });
       }
       if (err && err.message === "PRODUCT_NOT_FOUND") {
-        return res.status(404).json({ message: "PRODUCT_NOT_FOUND" });
+        return res.status(404).json({ message: "Producto no encontrado" });
       }
       if (err && err.code === "INSUFFICIENT_PAYMENT") {
-        return res.status(409).json({ message: "INSUFFICIENT_PAYMENT" });
+        return res.status(409).json({ message: "Monto insuficiente" });
       }
       return next(err);
     }
@@ -55,7 +55,7 @@ export const SalesController = {
     try {
       const { total, monto_recibido } = changeSchema.parse(req.body);
       if (monto_recibido < total) {
-        return res.status(409).json({ message: "INSUFFICIENT_PAYMENT" });
+        return res.status(409).json({ message: "Monto insuficiente" });
       }
 
       return res.status(200).json({ cambio: monto_recibido - total });
