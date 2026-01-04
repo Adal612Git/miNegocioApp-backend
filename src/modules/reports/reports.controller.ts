@@ -10,7 +10,7 @@ const salesReportSchema = z.object({
 });
 
 export const ReportsController = {
-  salesSummary: async (req: Request, res: Response, next: NextFunction) => {
+  salesSummary: async (req: Request, res: Response<any>, next: NextFunction) => {
     try {
       const { start_date, end_date } = salesReportSchema.parse(req.query);
       const businessId = req.auth?.businessId;

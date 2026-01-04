@@ -16,7 +16,7 @@ const listSchema = z.object({
 });
 
 export const AppointmentsController = {
-  create: async (req: Request, res: Response, next: NextFunction) => {
+  create: async (req: Request, res: Response<any>, next: NextFunction) => {
     try {
       const { date, time, notes, status } = createSchema.parse(req.body);
       const businessId = req.auth?.businessId;
@@ -50,7 +50,7 @@ export const AppointmentsController = {
     }
   },
 
-  list: async (req: Request, res: Response, next: NextFunction) => {
+  list: async (req: Request, res: Response<any>, next: NextFunction) => {
     try {
       const { start_date, end_date } = listSchema.parse(req.query);
       const businessId = req.auth?.businessId;
