@@ -8,18 +8,41 @@
 
 (function(){
   const stored = localStorage.getItem("user");
-  if (!stored) return;
+  const nameEls = document.querySelectorAll(".side-user .name");
+  const avatarEls = document.querySelectorAll(".side-user .avatar");
+  const firstNameEl = nameEls[0];
+  const defaultName = (firstNameEl && firstNameEl.textContent || "").trim() || "Nombre";
+  const applyName = (value) => {
+    const safeName = String(value || "").trim() || defaultName;
+    nameEls.forEach((el) => {
+      el.textContent = safeName;
+    });
+    avatarEls.forEach((el) => {
+      el.textContent = safeName.charAt(0).toUpperCase() || "U";
+    });
+  };
+
+  if (!stored) {
+    applyName(defaultName);
+    return;
+  }
+
   try {
     const user = JSON.parse(stored);
-    const name = user?.name ? String(user.name) : "";
-    if (!name) return;
-    document.querySelectorAll(".side-user .name").forEach((el) => {
-      el.textContent = name;
-    });
-    document.querySelectorAll(".side-user .avatar").forEach((el) => {
-      el.textContent = name.trim().charAt(0).toUpperCase() || "U";
-    });
+    const rawName = user && typeof user === "object" ? user.name : "";
+    const name = typeof rawName === "string" ? rawName : String(rawName || "");
+    if (!name.trim()) {
+      applyName(defaultName);
+      // Evita que un valor vacio quede persistido y se repita.
+      try {
+        localStorage.setItem("user", JSON.stringify({ ...(user || {}), name: defaultName }));
+      } catch {
+        // Si storage falla, solo usa el valor en UI.
+      }
+      return;
+    }
+    applyName(name);
   } catch {
-    return;
+    applyName(defaultName);
   }
 })();
