@@ -65,11 +65,7 @@ const registerSchema = z.object({
     .string()
     .min(2, { message: "Nombre demasiado corto" })
     .max(50, { message: "Nombre demasiado largo" }),
-  phone: z
-    .coerce
-    .string()
-    .min(10, { message: "El telefono debe tener al menos 10 digitos" })
-    .max(15, { message: "El telefono debe tener maximo 15 digitos" }),
+  phone: z.string().min(10).max(15),
   email: z
     .string()
     .email({ message: "Formato de correo inválido" })
@@ -120,6 +116,14 @@ function isReplicaSetError(err: unknown) {
 export const AuthController = {
   register: async (req: Request, res: Response, next: NextFunction) => {
     try {
+      const rawPhone =
+        typeof req.body?.phone === "string" ? req.body.phone : String(req.body?.phone ?? "");
+      const cleanedPhone = rawPhone.trim().replace(/\D/g, "");
+      if (req.body) {
+        req.body.phone = cleanedPhone;
+      }
+      console.log(" Telefono recibido en el servidor:", cleanedPhone.length, "caracteres");
+
       const { business_name, name, phone, email, password } =
         await registerSchema.parseAsync(req.body);
 
@@ -435,5 +439,6 @@ export const AuthController = {
     }
   },
 };
+
 
 

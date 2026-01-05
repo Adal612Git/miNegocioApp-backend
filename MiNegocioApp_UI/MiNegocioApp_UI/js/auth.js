@@ -45,7 +45,8 @@
   }
 
   function normalizePhone(raw) {
-    return String(raw || "").replace(/\D/g, "").slice(0, 10);
+    const withoutSpaces = String(raw || "").replace(/\s+/g, "");
+    return withoutSpaces.replace(/\D/g, "").slice(0, 10);
   }
 
   function isValidEmail(email) {
