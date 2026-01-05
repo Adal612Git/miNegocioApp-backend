@@ -5,6 +5,7 @@ import { SalesController } from "./modules/sales/sales.controller";
 import { AppointmentsController } from "./modules/appointments/appointments.controller";
 import { ProductsController } from "./modules/products/products.controller";
 import { ReportsController } from "./modules/reports/reports.controller";
+import { NotificationsController } from "./modules/notifications/notifications.controller";
 import { authMiddleware } from "./middlewares/auth.middleware";
 
 const router = Router();
@@ -21,6 +22,8 @@ router.use(authMiddleware);
 
 router.get("/me", AuthController.me);
 router.get("/profile", AuthController.me);
+
+router.get("/notifications", NotificationsController.list);
 
 router.post("/sales", SalesController.create);
 router.post("/sales/change", SalesController.calculateChange);
