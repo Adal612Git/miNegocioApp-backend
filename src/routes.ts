@@ -32,6 +32,7 @@ router.post("/appointments", AppointmentsController.create);
 router.get("/appointments", AppointmentsController.list);
 
 router.get("/products", ProductsController.list);
+router.get("/inventory", ProductsController.list);
 router.post("/products", ProductsController.create);
 router.patch("/products/:id", ProductsController.update);
 router.patch("/products/:id/stock", ProductsController.updateStock);

@@ -4,7 +4,18 @@ import { z } from "zod";
 import { ProductModel } from "./products.model";
 
 const allowedCategories = new Set(
-  ["servicio", "paquete", "otro", "producto", "insumo"].map((item) =>
+  [
+    "servicio",
+    "paquete",
+    "otro",
+    "producto",
+    "insumo",
+    "accesorio",
+    "corte",
+    "color",
+    "tratamiento",
+    "spa",
+  ].map((item) =>
     item.toLowerCase()
   )
 );
@@ -51,6 +62,8 @@ export const ProductsController = {
       if (!businessId) {
         return res.status(401).json({ message: "No autorizado" });
       }
+
+      console.log("Listado de inventario", { businessId, path: req.path });
 
       const products = await ProductModel.find({
         business_id: businessId,
