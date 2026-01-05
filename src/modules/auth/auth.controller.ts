@@ -68,7 +68,8 @@ const registerSchema = z.object({
   phone: z
     .coerce
     .string()
-    .regex(/^\d{10}$/, { message: "Formato de teléfono inválido" }),
+    .min(10, { message: "El telefono debe tener al menos 10 digitos" })
+    .max(15, { message: "El telefono debe tener maximo 15 digitos" }),
   email: z
     .string()
     .email({ message: "Formato de correo inválido" })
@@ -434,3 +435,5 @@ export const AuthController = {
     }
   },
 };
+
+
