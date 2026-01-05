@@ -123,6 +123,7 @@ export const AuthController = {
         req.body.phone = cleanedPhone;
       }
       console.log(" Telefono recibido en el servidor:", cleanedPhone.length, "caracteres");
+      console.log(" Body completo recibido:", req.body);
 
       const { business_name, name, phone, email, password } =
         await registerSchema.parseAsync(req.body);

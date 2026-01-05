@@ -99,7 +99,8 @@
     const businessName =
       getValue("business_name") || getValue("businessName") || getValue("negocio");
     const name = getValue("name") || getValue("full_name") || getValue("nombre");
-    const phone = normalizePhone(getValue("phone"));
+    const phoneInput = document.querySelector('input[name="phone"]');
+    const phone = normalizePhone(phoneInput ? phoneInput.value : "");
     const email = getValue("email");
     const password = getValue("password");
     const passwordConfirm = getValue("password_confirm");
