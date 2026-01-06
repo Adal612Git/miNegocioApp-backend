@@ -19,9 +19,18 @@ const allowedCategories = new Set(
     item.toLowerCase()
   )
 );
+const serviceCategories = new Set(
+  ["servicio", "paquete", "otro", "corte", "color", "tratamiento", "spa"].map(
+    (item) => item.toLowerCase()
+  )
+);
 
 function normalizeCategory(value: string) {
   return String(value || "").trim().toLowerCase();
+}
+
+function isServiceCategory(value: string) {
+  return serviceCategories.has(normalizeCategory(value));
 }
 
 const createSchema = z.object({
@@ -84,11 +93,14 @@ export const ProductsController = {
         return res.status(401).json({ message: "No autorizado" });
       }
 
+      const normalizedCategory = normalizeCategory(category);
+      const stockValue = isServiceCategory(normalizedCategory) ? 0 : stock;
+
       const product = await ProductModel.create({
         business_id: businessId,
         name,
         price,
-        stock,
+        stock: stockValue,
         category,
         is_active: true,
       });
@@ -132,6 +144,10 @@ export const ProductsController = {
         return res.status(401).json({ message: "No autorizado" });
       }
       const productId = req.params.id;
+
+      if (updates.category && isServiceCategory(updates.category)) {
+        updates.stock = 0;
+      }
 
       const updated = await ProductModel.findOneAndUpdate(
         { _id: productId, business_id: businessId, is_active: true },

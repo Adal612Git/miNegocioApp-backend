@@ -18,6 +18,20 @@ class OutOfStockError extends Error {
   code = "OUT_OF_STOCK";
 }
 
+const SERVICE_CATEGORIES = new Set(
+  ["servicio", "paquete", "otro", "corte", "color", "tratamiento", "spa"].map(
+    (item) => item.toLowerCase()
+  )
+);
+
+function normalizeCategory(value: string) {
+  return String(value || "").trim().toLowerCase();
+}
+
+function isServiceCategory(value: string) {
+  return SERVICE_CATEGORIES.has(normalizeCategory(value));
+}
+
 function isReplicaSetError(err: unknown) {
   const message = err instanceof Error ? err.message : String(err);
   return (
@@ -60,10 +74,12 @@ export const SalesService = {
           productId: product._id,
           quantity: item.quantity,
           price: product.price,
+          isService: isServiceCategory(product.category),
         };
       });
 
       for (const item of saleItems) {
+        if (item.isService) continue;
         const updated = await ProductModel.updateOne(
           {
             _id: item.productId,
